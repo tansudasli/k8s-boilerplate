@@ -1,0 +1,14 @@
+# inventory file
+
+# group w/ alias
+# possible params: ansible_host=, ansible_user=, ansible_ssh_pass=, ansible_connection=ssh/winrm/localhost
+# by default, Ansible uses running user in host system. if this username is not found on the remote system
+# then, uses below ansible_user
+[k8s]
+master01 ansible_host=192.168.225.52 ansible_user=ansible
+#worker01 ansible_host=ip2 ansible_user=ansible
+
+#others, if needed
+#master02 ansible_host=ip1 ansible_user=ansible
+#worker02 ansible_host=ip2 ansible_user=ansible
+#worker03 ansible_host=ip2 ansible_user=ansible

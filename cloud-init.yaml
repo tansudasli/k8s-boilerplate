@@ -1,0 +1,41 @@
+#cloud-config
+#
+# Automating things while initializing physical machines,
+# If you want to run manually after you completed installation,
+# copy this file to server and run
+# sudo rm -f /var/log/cloud-init*
+# sudo cloud-init clean
+# sudo cloud-init -f cloud-init.yaml -d modules --mode init
+# sudo cloud-init -f cloud-init.yaml -d modules --mode final
+# cat /var/log/cloud-init* | grep "..."
+users:
+  - default                                  #creates ubuntu user
+  - name: ansible
+    groups: [adm, sudo]
+    lock_passwd: false
+    shell: /bin/bash
+    sudo:  ALL=(ALL) NOPASSWD:ALL
+    plain_text_passwd: ansible               #todo: change this w/ proper secure ways
+    ssh_authorized_keys:                     #todo: create your ssh-key, and replace w/ your pub-key
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCnpmIdynltJCwWphGpqotwoQTNQbRVKM1IOA48jb3ZtDFwgaAbvoJBJ5dfMKZ04SkO7Zy3uKlWDP8rOzpwxhPZvwK4+dxOvhoqwfBldIl9u6iGgP7H1HtB7w5Aah9/XISyRb5l+br0s9rnlV4U15VSBRUVnqd1O6L7z/nshWo29mi8IqZPkIUacAj+JAiek3pFoCKBna8KsOYyf8Z9NYBGWmt0Y9Xo7zTpgJrvMkJEy4xMTotDxlnu+LzlGmsLYEDaOD3opQ9Z9jcjM3Et/AeYYtzZZdyGDgJ3h7Pf5jq5Wh9BuDxyX0czGZ4A+mEfUfwUpOJS+kt/8MozG3TVcSHb tansudasli@MacBook.local
+
+#Below hostname will be replaced w/ regex in bootstrap.yaml
+#this part does not update /etc/hosts file.
+preserve_hostname: false
+prefer_fqdn_over_hostname: false
+#fqdn: <fqdn>
+hostname: base                               #todo: default hostname value
+
+package_update: true
+package_upgrade: true
+
+#runcmd:
+#  - echo "=========message========="
+
+#packages:
+#  - sshpass                                  # ansible needs, if you use ssh password
+#  - openssh-server                          # normally, no need to install here
+#  - openjdk-8-jre
+#  - pdsh
+
+final_message: "cloud-init is ===finally=== done, after $UPTIME seconds"

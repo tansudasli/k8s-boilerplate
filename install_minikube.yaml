@@ -1,0 +1,91 @@
+# Installs minikube
+# only needs 1 machine
+- name: install minikube
+  hosts: k8s
+  become: yes
+  become_user: ansible
+  gather_facts: yes
+
+  vars:
+    dummy: ali
+    user: minikube
+    k8s_stable_version: v1.22.0
+
+  tasks:
+    - name: Check 1
+      debug: msg="{{dummy}} - "
+
+    - name: User - Create minikube
+      user:
+        name: minikube
+        groups: adm,sudo
+        append: yes
+        create_home: true
+        shell: /bin/bash
+      become: yes
+      become_user: root
+
+    - name: Update package cache
+      apt:
+        update_cache: yes
+      become: yes
+      become_user: root
+
+    - name: Hypervisor - Install KVM
+      apt:
+        pkg:
+          - qemu
+          - qemu-kvm
+          - libvirt-daemon
+          - libvirt-clients
+          - bridge-utils
+          - virt-manager
+        state: latest
+        autoclean: yes
+      become: yes
+      become_user: root
+
+    - name: Hypervisor - Add '{{ user }}' user to group 'libvirt'
+      user:
+        name: '{{ user }}'
+        groups: libvirt
+        append: yes
+
+    - name: kubectl - download
+      get_url:
+        url: https://storage.googleapis.com/kubernetes-release/release/v1.22.0/bin/linux/amd64/kubectl
+        dest: /usr/local/bin/kubectl
+        mode: a+x
+        group: minikube
+        owner: minikube
+      become: yes
+      become_user: root
+
+    - name: minikube - download
+      get_url:
+        url: https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+        dest: /usr/local/bin/minikube
+        mode: a+x
+        group: minikube
+        owner: minikube
+      become: yes
+      become_user: root
+
+    - name: minicube - CPU core must be greater than 1
+      debug: msg="Current cpus is {{ ansible_processor_cores }}."
+      failed_when:
+        - "1 == ansible_processor_cores"
+
+    - name: minicube - Memory must be greater than 3500
+      debug: msg="Current memory is {{ ansible_memtotal_mb }}."
+      failed_when:
+        - "3500 >= ansible_memtotal_mb"
+
+    - name: minikube - start
+      ansible.builtin.command: minikube start --memory=3000mb --driver=kvm2
+      become: yes
+      become_user: minikube
+      register: minikubeStatus
+
+    - name: minikube - status
+      debug: msg="{{ minikubeStatus }} - "

@@ -1,0 +1,58 @@
+# Adjust machine specific things
+# only for bare-metals or compute engines
+# not suitable for cloud provider flavors (GKE, EKS ..)
+- name: bootstrap
+  hosts: k8s
+  become: yes
+  become_user: ansible
+  gather_facts: no
+
+  vars:
+    dummy: ali
+
+  tasks:
+    - name: Check 1
+      debug: msg="{{dummy}} - "
+
+    - name: Virtualization - Must be greater than 0
+      command: egrep -c '(vmx|svm)' /proc/cpuinfo
+      register: isVirtualizationEnabled
+      failed_when:
+        - "'0' in isVirtualizationEnabled.stdout"
+
+    - name: Virtualization - CPU must be 64 bit
+      command: egrep -c ' lm ' /proc/cpuinfo
+      register: isCPU64bit
+      failed_when:
+        - "'0' in isCPU64bit.stdout"
+
+    - name: Hostname - Must be equal to 'base'
+      command: hostname
+      register: currentHostname
+      failed_when:
+        - "'base' != currentHostname.stdout"
+      ignore_errors: yes
+
+    - name: Hostname - Update hostname as '{{inventory_hostname}}'
+      hostname:
+        name: "{{inventory_hostname}}"
+        use: debian                            #todo: ubuntu specific value
+      become: yes
+      become_user: root
+
+    - name: Hostname - Update /etc/hosts, too
+      replace:
+        path: /etc/hosts
+        regexp: >-
+          (\s+){{currentHostname.stdout}}(\s+.*)?$
+        replace: >-
+          \1{{inventory_hostname}}\2
+      become: yes
+      become_user: root
+
+
+
+# may need community.general.nmcli
+#    - name: Network - Apply static IP
+#      debug:
+#        msg: "{{user}} - "
