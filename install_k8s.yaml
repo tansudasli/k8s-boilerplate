@@ -1,0 +1,15 @@
+# Installs k8s
+#
+#
+
+- name: Install minikube
+  hosts: k8s
+  become: yes
+  become_user: ansible
+  gather_facts: yes
+
+  vars:
+    user: k8s
+    hypervisor: kvm2                                       #todo: define hypervisor as kvm2|docker|none
+
+  tasks:
