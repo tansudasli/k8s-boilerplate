@@ -2,11 +2,13 @@
 #
 # Automating things while initializing physical machines,
 # If you want to run manually after you completed installation,
+#
 # copy this file to server and run
 # sudo rm -f /var/log/cloud-init*
 # sudo cloud-init clean
 # sudo cloud-init -f cloud-init.yaml -d modules --mode init
 # sudo cloud-init -f cloud-init.yaml -d modules --mode final
+#
 # cat /var/log/cloud-init* | grep "..."
 users:
   - default                                  #creates ubuntu user

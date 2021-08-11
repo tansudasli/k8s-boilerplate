@@ -2,7 +2,7 @@
 #
 # You can use kvm, docker or none as hypervisor. On virtualbox, docker performs better than kvm (consumes more CPU.
 
-- name: install minikube
+- name: Install minikube
   hosts: k8s
   become: yes
   become_user: ansible
@@ -11,12 +11,9 @@
   vars:
     dummy: ali
     user: minikube
-    k8s_stable_version: v1.22.0
     hypervisor: kvm2                                       #todo: define hypervisor as kvm2|docker|none
 
   tasks:
-    - name: Check 1
-      debug: msg="{{ dummy }} - "
 
     - name: Checks - minikube - OS is Ubuntu
       assert:
@@ -68,9 +65,13 @@
       when:
         - hypervisor == 'docker' or hypervisor == 'none'
 
+    - name: kubectl - Get stable version
+      command: curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt
+      register: k8sStableVersion
+
     - name: kubectl - download
       get_url:
-        url: https://storage.googleapis.com/kubernetes-release/release/v1.22.0/bin/linux/amd64/kubectl
+        url: https://storage.googleapis.com/kubernetes-release/release/{{k8sStableVersion.stdout}}/bin/linux/amd64/kubectl
         dest: /usr/local/bin/kubectl
         mode: a+x
         group: minikube
@@ -90,9 +91,9 @@
 
 
     # at first run, minikube will download approx. 1g data.
-    # so, this will take time !!
+    # so, this will take much time !!
 #    - name: minikube - start
-#      ansible.builtin.command: minikube start --memory=3000mb --driver=kvm2
+#      command: minikube start --memory=3000mb --driver={{hypervisor}}
 #      become: yes
 #      become_user: minikube
 #      register: minikubeStatus
