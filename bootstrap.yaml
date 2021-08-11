@@ -11,26 +11,39 @@
     dummy: ali
 
   tasks:
-    - name: Check 1
-      debug: msg="{{dummy}} - "
 
-    - name: Virtualization - Must be greater than 0
+    - name: Checks - Virtualization - Get vmx|svm info
       command: egrep -c '(vmx|svm)' /proc/cpuinfo
       register: isVirtualizationEnabled
-      failed_when:
-        - "'0' in isVirtualizationEnabled.stdout"
 
-    - name: Virtualization - CPU must be 64 bit
+    - name: Checks - Virtualization - CPU info is not 0
+      assert:
+        that:
+          - "'{{isVirtualizationEnabled.stdout}}' != '0'"
+        fail_msg: "VT-x/AMD-V is not enabled. "
+        success_msg: "VT-x/AMD-V is enabled"
+
+    - name: Checks - Virtualization - Get CPU architecture
       command: egrep -c ' lm ' /proc/cpuinfo
       register: isCPU64bit
-      failed_when:
-        - "'0' in isCPU64bit.stdout"
 
-    - name: Hostname - Must be equal to 'base'
+    - name: Checks - Virtualization - CPU is 64bit
+      assert:
+        that:
+          - "'{{isCPU64bit.stdout}}' != '0'"
+        fail_msg: "CPU is not 64 bit."
+        success_msg: "CPU is 64 bit."
+
+    - name: Checks - Get current hostname
       command: hostname
       register: currentHostname
-      failed_when:
-        - "'base' != currentHostname.stdout"
+
+    - name: Checks - Is hostname equal to 'base'
+      assert:
+        that:
+          - "'{{currentHostname.stdout}}' == 'base'"
+        fail_msg: "Current hostname is not base. Be sure below replacements are fulfilled"
+        success_msg: "Current hostname is base"
       ignore_errors: yes
 
     - name: Hostname - Update hostname as '{{inventory_hostname}}'
