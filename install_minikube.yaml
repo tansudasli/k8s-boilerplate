@@ -20,6 +20,27 @@
     - name: Check 1
       debug: msg="{{ dummy }} - "
 
+    - name: Checks - minikube - OS is Ubuntu
+      assert:
+        that:
+          - "'{{ansible_facts['distribution']}}' == 'Ubuntu'"
+        fail_msg: "OS distribution must be Ubuntu"
+        success_msg: "OS distribution is ok"
+
+    - name: Checks - minikube - CPU core is gt 1
+      assert:
+        that:
+          - "{{ansible_processor_cores}} > 1"
+        fail_msg: "CPU core must be greater than 1. Available = {{ansible_processor_cores}}"
+        success_msg: "Available core is {{ansible_processor_cores}}"
+
+    - name: Checks - minikube - RAM is gte 3500mb
+      assert:
+        that:
+          - "{{ansible_memtotal_mb}} >= 3500"
+        fail_msg: "Memory must be greater equal than 3500. Available = {{ansible_memtotal_mb}}"
+        success_msg: "Available memory is {{ansible_memtotal_mb}}"
+
     - name: User - Create minikube
       user:
         name: minikube
@@ -33,12 +54,10 @@
     - include_tasks: tasks/hypervisor_kvm.yaml
       when:
         - hypervisor == 'kvm2'
-        - ansible_facts['os_family'] == 'Ubuntu'
 
     - include_tasks: tasks/hypervisor_docker.yaml
       when:
         - hypervisor == 'docker' or hypervisor == 'none'
-#        - ansible_facts['os_family'] == 'Ubuntu'
 
     - name: kubectl - download
       get_url:
@@ -60,16 +79,6 @@
       become: yes
       become_user: root
 
-#todo: use assert !!!
-    - name: minicube - CPU core must be greater than 1
-      debug: msg="Current cpus is {{ ansible_processor_cores }}"
-      failed_when:
-        - "1 == ansible_processor_cores"
-
-    - name: minicube - Memory must be greater than 3500
-      debug: msg="Current memory is {{ ansible_memtotal_mb }}"
-      failed_when:
-        - "3500 >= ansible_memtotal_mb"
 
     # at first run, minikube will download approx. 1g data.
     # so, this will take time !!
