@@ -9,7 +9,6 @@
   gather_facts: yes
 
   vars:
-    dummy: ali
     user: minikube
     hypervisor: kvm2                                       #todo: define hypervisor as kvm2|docker|none
 
