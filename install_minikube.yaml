@@ -1,8 +1,6 @@
 # Installs minikube
-# You can use as hypervisor kvm or docker or none.
-#    on virtualbox, docker version performs way better than kvm. kvm version consumes more cpu!
-# only needs 1 machine
-# os == ubuntu
+#
+# You can use kvm, docker or none as hypervisor. On virtualbox, docker performs better than kvm (consumes more CPU.
 
 - name: install minikube
   hosts: k8s
@@ -38,8 +36,19 @@
       assert:
         that:
           - "{{ansible_memtotal_mb}} >= 3500"
-        fail_msg: "Memory must be greater equal than 3500. Available = {{ansible_memtotal_mb}}"
+        fail_msg: "Memory must be greater equal than 3500. Available = {{ansible_memtotal_mb}} mb"
         success_msg: "Available memory is {{ansible_memtotal_mb}}"
+
+    - name: Checks - Get / (root) disk size
+      shell: df / --output\=avail | tail -1
+      register: rootFreeSpace
+
+    - name: Checks - minikube - Disk is gte 50gb
+      assert:
+        that:
+          - "{{rootFreeSpace.stdout | float}} >= 50000000"
+        fail_msg: "Disk size must be greater equal than 50gb. Available = {{rootFreeSpace.stdout | float}}kb"
+        success_msg: "Available disk is {{rootFreeSpace.stdout | float}} kb"
 
     - name: User - Create minikube
       user:
