@@ -1,0 +1,24 @@
+# installs KVM
+
+- name: Hypervisor - KVM - Installations...
+  apt:
+    pkg:
+      - qemu
+      - qemu-kvm
+      - libvirt-daemon
+      - libvirt-clients
+      - bridge-utils
+      - virt-manager
+    state: latest
+    autoclean: yes
+    update_cache: yes
+  become: yes
+  become_user: root
+
+- name: Hypervisor - KVM - Add '{{ user }}' user to group 'libvirt'
+  user:
+    name: '{{ user }}'
+    groups: libvirt
+    append: yes
+  become: yes
+  become_user: root

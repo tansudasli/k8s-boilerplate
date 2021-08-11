@@ -1,0 +1,52 @@
+# installs Docker
+
+- name: Hypervisor - Docker - Install prerequirements
+  apt:
+    pkg:
+      - install
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+    state: latest
+    autoclean: yes
+    update_cache: yes
+  become: yes
+  become_user: root
+
+- name: Hypervisor - Docker - Add gpg key
+  command: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+  register: GPGKeyStatus
+
+- name:
+  debug:
+    msg: "{{GPGKeyStatus}} - "
+
+- name: Hypervisor - Docker - Add stable repository
+  command: echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  register: repositoryStatus
+
+- name:
+  debug:
+    msg: "{{repositoryStatus}} - "
+
+- name: Hypervisor - Docker - Installations...
+  apt:
+    pkg:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    state: latest
+    autoclean: yes
+    update_cache: yes
+  become: yes
+  become_user: root
+
+- name: Hypervisor - Docker - Add '{{ user }}' user to group 'docker'
+  user:
+    name: '{{ user }}'
+    groups: docker
+    append: yes
+  become: yes
+  become_user: root

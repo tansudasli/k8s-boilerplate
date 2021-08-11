@@ -1,5 +1,9 @@
 # Installs minikube
+# You can use as hypervisor kvm or docker or none.
+#    on virtualbox, docker version performs way better than kvm. kvm version consumes more cpu!
 # only needs 1 machine
+# os == ubuntu
+
 - name: install minikube
   hosts: k8s
   become: yes
@@ -10,10 +14,11 @@
     dummy: ali
     user: minikube
     k8s_stable_version: v1.22.0
+    hypervisor: kvm2                                       #todo: define hypervisor as kvm2|docker|none
 
   tasks:
     - name: Check 1
-      debug: msg="{{dummy}} - "
+      debug: msg="{{ dummy }} - "
 
     - name: User - Create minikube
       user:
@@ -25,31 +30,15 @@
       become: yes
       become_user: root
 
-    - name: Update package cache
-      apt:
-        update_cache: yes
-      become: yes
-      become_user: root
+    - include_tasks: tasks/hypervisor_kvm.yaml
+      when:
+        - hypervisor == 'kvm2'
+        - ansible_facts['os_family'] == 'Ubuntu'
 
-    - name: Hypervisor - Install KVM
-      apt:
-        pkg:
-          - qemu
-          - qemu-kvm
-          - libvirt-daemon
-          - libvirt-clients
-          - bridge-utils
-          - virt-manager
-        state: latest
-        autoclean: yes
-      become: yes
-      become_user: root
-
-    - name: Hypervisor - Add '{{ user }}' user to group 'libvirt'
-      user:
-        name: '{{ user }}'
-        groups: libvirt
-        append: yes
+    - include_tasks: tasks/hypervisor_docker.yaml
+      when:
+        - hypervisor == 'docker' or hypervisor == 'none'
+#        - ansible_facts['os_family'] == 'Ubuntu'
 
     - name: kubectl - download
       get_url:
@@ -71,21 +60,24 @@
       become: yes
       become_user: root
 
+#todo: use assert !!!
     - name: minicube - CPU core must be greater than 1
-      debug: msg="Current cpus is {{ ansible_processor_cores }}."
+      debug: msg="Current cpus is {{ ansible_processor_cores }}"
       failed_when:
         - "1 == ansible_processor_cores"
 
     - name: minicube - Memory must be greater than 3500
-      debug: msg="Current memory is {{ ansible_memtotal_mb }}."
+      debug: msg="Current memory is {{ ansible_memtotal_mb }}"
       failed_when:
         - "3500 >= ansible_memtotal_mb"
 
-    - name: minikube - start
-      ansible.builtin.command: minikube start --memory=3000mb --driver=kvm2
-      become: yes
-      become_user: minikube
-      register: minikubeStatus
+    # at first run, minikube will download approx. 1g data.
+    # so, this will take time !!
+#    - name: minikube - start
+#      ansible.builtin.command: minikube start --memory=3000mb --driver=kvm2
+#      become: yes
+#      become_user: minikube
+#      register: minikubeStatus
 
     - name: minikube - status
       debug: msg="{{ minikubeStatus }} - "
