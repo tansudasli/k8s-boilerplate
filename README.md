@@ -39,25 +39,23 @@ Install Ansible on you local machine, then
   - Manually create bare-metals (on your local machine using Virtualbox, or bare-metal-as-a-service provider (Scaleway) or 
     in your DC). So adjust basic networking things (i.e. on virtualbox use bridged network), and then
     - Complete `OS installation`
-    - Set hostname as `base` 
-    - Create `default user` as admin during installation
-    - Create `ansible` user (as service account), add to `sudo` and `adm` groups, and your public-key
-    - ssh-server  
-    - Set static IP
+      - Set hostname as `base` 
+      - Create `default user` as admin during installation
+      - Create `ansible` user (as service account), add to `sudo` and `adm` groups, and your public-key
+      - ssh-server  
+      - Set static IP
     - Get `machine IPs`, and Update the `hosts` file.
 
-    This part normally can be automized by `cloud-init`. To use cloud-init in Virtualbox, You need 
+    Steps in `OS installation` normally can be automized by `cloud-init`. To use cloud-init in Virtualbox, You need 
     - `multipass` or
     - `vagrant` or 
-    -  manually run `cloud-init.yaml`. Check cloud-init.yaml for more!
+    -  manually run `cloud-init.yaml` on the machine. Check cloud-init.yaml for more!
 
 - Bootstrapping.
   <br>Every server needs some checks, installations, or hardening etc...
     - Check virtualization
-    - Set hostname
+    - Set hostname as `hosts` file
     - Set networking (static IP)
-    - Install virtualization technology
-    
 
 - K8s
 
