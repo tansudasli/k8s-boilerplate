@@ -49,7 +49,7 @@
     - name: Hostname - Update hostname as '{{inventory_hostname}}'
       hostname:
         name: "{{inventory_hostname}}"
-        use: debian                            #todo: ubuntu specific value
+        use: systemd
       become: yes
       become_user: root
 
