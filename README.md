@@ -42,11 +42,12 @@ Install Ansible on your machine (acts as ansible host), then
     in your DC). So adjust basic networking things (i.e. on virtualbox use bridged network), and then
     - OS installation
       - Install ubuntu server, w/ lvm
+      - Define `default user` as admin
+      - Enable openssh-server
     - Preparations
       - Set hostname as `base`
-      - Create `default user` as admin during installation
       - Create `ansible` user (as service account), add to `sudo` and `adm` groups, and your public-key
-      - Install ssh-server (inject your pub keys, disable password login ...)
+      - Config ssh (inject your pub keys, disable password login ...)
       - Set static IP
       - Get `machine IPs`, and Update the `hosts` file.
 
