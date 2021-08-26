@@ -45,7 +45,7 @@ Install Ansible on your machine (acts as ansible host), then
       - Define your `default user` as admin
       - Enable openssh-server
     - Preparations
-      - Set hostname as `base`
+      - Set hostname as `base`, Update `/etc/hosts` file
       - Create `ansible` user (as service account), add to `sudo` and `adm` groups, and your public-key
       - Configure ssh (inject your pub keys, disable password login ...)
       - Set static IP
