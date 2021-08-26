@@ -42,20 +42,20 @@ Install Ansible on your machine (acts as ansible host), then
     in your DC). So adjust basic networking things (i.e. on virtualbox use bridged network), and then
     - OS installation
       - Install ubuntu server, w/ lvm
-      - Define `default user` as admin
+      - Define your `default user` as admin
       - Enable openssh-server
     - Preparations
       - Set hostname as `base`
       - Create `ansible` user (as service account), add to `sudo` and `adm` groups, and your public-key
       - Configure ssh (inject your pub keys, disable password login ...)
       - Set static IP
-      - Get `machine IPs`, and Update the `hosts` file.
 
       <br>
       Steps in _Preparations_ normally can be automized by `cloud-init`. To use cloud-init in Virtualbox/KVM, You need 
         - `multipass` or `vagrant` or 
         -  manually run `cloud-init.yaml` on the target machine. Check `cloud-init.yaml` for more!
-
+      
+      - Get `machine IPs`, and Update the `hosts` file.
     - Bootstrapping.
       <br>Every server needs some checks, extra installations, or hardening etc...
       - Check virtualization
