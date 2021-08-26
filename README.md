@@ -47,7 +47,7 @@ Install Ansible on your machine (acts as ansible host), then
     - Preparations
       - Set hostname as `base`
       - Create `ansible` user (as service account), add to `sudo` and `adm` groups, and your public-key
-      - Config ssh (inject your pub keys, disable password login ...)
+      - Configure ssh (inject your pub keys, disable password login ...)
       - Set static IP
       - Get `machine IPs`, and Update the `hosts` file.
 
