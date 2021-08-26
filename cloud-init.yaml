@@ -14,10 +14,9 @@ users:
   - default                                  #creates ubuntu user
   - name: ansible
     groups: [adm, sudo]
-    lock_passwd: false
+    lock_passwd: true                        #if true, login only ssh-key possible
     shell: /bin/bash
     sudo:  ALL=(ALL) NOPASSWD:ALL
-    plain_text_passwd: ansible               #todo: change this w/ proper secure ways
     ssh_authorized_keys:                     #todo: create your ssh-key, and replace w/ your pub-key
       - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCnpmIdynltJCwWphGpqotwoQTNQbRVKM1IOA48jb3ZtDFwgaAbvoJBJ5dfMKZ04SkO7Zy3uKlWDP8rOzpwxhPZvwK4+dxOvhoqwfBldIl9u6iGgP7H1HtB7w5Aah9/XISyRb5l+br0s9rnlV4U15VSBRUVnqd1O6L7z/nshWo29mi8IqZPkIUacAj+JAiek3pFoCKBna8KsOYyf8Z9NYBGWmt0Y9Xo7zTpgJrvMkJEy4xMTotDxlnu+LzlGmsLYEDaOD3opQ9Z9jcjM3Et/AeYYtzZZdyGDgJ3h7Pf5jq5Wh9BuDxyX0czGZ4A+mEfUfwUpOJS+kt/8MozG3TVcSHb tansudasli@monster.local
       - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCVxqHKh51S/USywMWnb3TPDP5R5UBL3+B+73qTb192nCM2rkfmuq5N7Rc7aGSQDEwkLvqgTV9oT2NEillmNLSk+LfKMxF7uJi3xRvRffpPX+uzhuxtSsyv0igIqaEEzOW+qNipk9u4kW3b4akp1fYewQvmdzcgOITiV5ZUyXlXr2TO+jozc9zprRnziIpk3lSV65GQk1GX/B3l6zU5B61OYp0HnZfhhZGWcCv/oaKqHQTWdLgTX30cNw8U0EfQa8EF1YvDCQzfm17ZSynm8/c7gJmgZjDAvP1Zn/hkO6yhxM8yh8ZqIFT8PB3Aq7JSzriROPRhNHgJMVEhOOuTgIXp tansudasli@x1
@@ -37,7 +36,7 @@ package_upgrade: true
 #  - echo "=========message========="
 
 #packages:
-#  - sshpass                                  # ansible needs, if you use ssh password
+#  - sshpass                                 # ansible needs, if you use ssh password
 #  - openssh-server                          # normally, no need to install here
 #  - openjdk-8-jre
 #  - pdsh
