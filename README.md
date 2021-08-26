@@ -10,9 +10,10 @@ Also, regarding product-idea requirements, some technical decisions such as stor
 So, There are so many ways, and there is no perfect architecture, but we should try to put better approaches.
 
 - Physical nodes (Min. 1)
-  - preparations
+  - OS installation
+  - preparations (cloud-init)
   - bootstrapping  
-  - k8s  
+  - extra-installations 
 - Front-end layer (w/ ingress controller + services to load balance)
   - routing to static (www.)
   - routing to static (core., bo. or other micro-apps)
@@ -28,35 +29,43 @@ So, There are so many ways, and there is no perfect architecture, but we should 
 
 ## How to start
 
-Install Ansible on you local machine, then
+Install Ansible on your machine (acts as ansible host), then
 
 - Prepare physical nodes. 
-  <br>Making this part automated is quite long topic. Such as, automate virtualbox w/ vagrant or automate virtualbox w/ multipass via
-  leveraging cloud-init vs ansible, CLIs vs ansible cloud provider specific roles... It also depends on 
-  infrastructure strategy like bare metals vs cloud providers (flavors like GKE are much sense instead of compute nodes).
+  <br>Making this part automated is quite long topic. Such as, automate virtualbox w/ vagrant or 
+  automate virtualbox w/ multipass via leveraging cloud-init vs ansible, CLIs vs ansible cloud provider specific roles.
+  It also depends on infrastructure strategy such as bare-metals vs public-cloud-providers (in this case, GKE/EKS is much sense).
   <br><br>
   
-  - Manually create bare-metals (on your local machine using Virtualbox, or bare-metal-as-a-service provider (Scaleway) or 
+  - Physical nodes.
+    <br>Manually create bare-metals (on your machine using Virtualbox/KVM, or bare-metal-as-a-service provider (Scaleway) or 
     in your DC). So adjust basic networking things (i.e. on virtualbox use bridged network), and then
-    - Complete `OS installation`
+    - OS installation
+      - Install ubuntu server, w/ lvm
+    - Preparations  
       - Set hostname as `base` 
       - Create `default user` as admin during installation
       - Create `ansible` user (as service account), add to `sudo` and `adm` groups, and your public-key
-      - ssh-server  
+      - Install ssh-server (inject your pub keys, disable password login ...)  
       - Set static IP
-    - Get `machine IPs`, and Update the `hosts` file.
+      - Get `machine IPs`, and Update the `hosts` file.
 
-    Steps in `OS installation` normally can be automized by `cloud-init`. To use cloud-init in Virtualbox, You need 
-    - `multipass` or
-    - `vagrant` or 
-    -  manually run `cloud-init.yaml` on the machine. Check cloud-init.yaml for more!
+      <br>
+      Steps in _Preparations_ normally can be automized by `cloud-init`. To use cloud-init in Virtualbox/KVM, You need 
+        - `multipass` or `vagrant` or 
+        -  manually run `cloud-init.yaml` on the target machine. Check `cloud-init.yaml` for more!
 
-- Bootstrapping.
-  <br>Every server needs some checks, installations, or hardening etc...
-    - Check virtualization
-    - Set hostname as `hosts` file
-    - Set networking (static IP)
+    - Bootstrapping.
+      <br>Every server needs some checks, extra installations, or hardening etc...
+        - Check virtualization
+        - Set hostname as in `hosts` file
+        - Set networking (static IP)
+    - extra-installations
+      <br>...
+      - k8s
 
-- K8s
+- Application Architecture
+
+- Domain Name and Global DNS
 
 - Test
